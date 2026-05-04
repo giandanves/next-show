@@ -19,10 +19,16 @@ model User {
   name           String?
   email          String   @unique
   hashedPassword String?
+  /// USER | CREATOR | ADMIN
   role           String   @default("USER")
 
   tokens   Token[]
   sessions Session[]
+
+  artists              Artist[]
+  showsCreated         Show[]       @relation("ShowCreatedBy")
+  roleInvitesSent      RoleInvite[] @relation("RoleInviteCreator")
+  roleInvitesFulfilled RoleInvite[] @relation("RoleInviteNewUser")
 }
 
 model Session {
@@ -46,8 +52,6 @@ model Token {
   updatedAt   DateTime @updatedAt
   hashedToken String
   type        String
-  // See note below about TokenType enum
-  // type        TokenType
   expiresAt   DateTime
   sentTo      String
 
@@ -57,9 +61,109 @@ model Token {
   @@unique([hashedToken, type])
 }
 
-// NOTE: It's highly recommended to use an enum for the token type
-//       but enums only work in Postgres.
-//       See: https://blitzjs.com/docs/database-overview#switch-to-postgre-sql
-// enum TokenType {
-//   RESET_PASSWORD
-// }
+/// Invite for CREATOR or ADMIN before the user account exists (separate from password-reset Token).
+model RoleInvite {
+  id             Int       @id @default(autoincrement())
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  email          String
+  /// CREATOR | ADMIN
+  intendedRole   String
+  tokenHash      String    @unique
+  expiresAt      DateTime
+  consumedAt     DateTime?
+
+  createdBy   User @relation("RoleInviteCreator", fields: [createdByUserId], references: [id])
+  createdByUserId Int
+
+  newUser   User? @relation("RoleInviteNewUser", fields: [createdUserId], references: [id])
+  createdUserId Int?
+
+  @@index([email])
+}
+
+model Location {
+  id            Int      @id @default(autoincrement())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  label         String?
+  addressLine1  String?
+  addressLine2  String?
+  city          String?
+  region        String?
+  postalCode    String?
+  country       String?
+  googlePlaceId String?
+
+  shows Show[]
+}
+
+/// Minimal stub for future venue management; expanded in a later migration.
+model Venue {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  shows Show[]
+}
+
+model Artist {
+  id                Int      @id @default(autoincrement())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  slug              String   @unique
+  displayName       String?
+  profilePictureUrl String?
+  /// Map of platform key -> URL, e.g. { "instagram": "https://..." }
+  socialLinks       String? // JSON object as string until connector supports Json
+
+  owner   User @relation(fields: [ownerUserId], references: [id])
+  ownerUserId Int
+
+  showLinks ShowArtist[]
+}
+
+model Show {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  title     String?
+  startsAt  DateTime
+  /// External URL for ticket purchase.
+  ticketPurchaseUrl String
+  /// Snapshot when no Location row is linked yet
+  addressLine1 String?
+  addressLine2 String?
+  city           String?
+  region         String?
+  postalCode     String?
+  country        String?
+
+  location   Location? @relation(fields: [locationId], references: [id])
+  locationId Int?
+
+  venue   Venue? @relation(fields: [venueId], references: [id])
+  venueId Int?
+
+  createdBy   User @relation("ShowCreatedBy", fields: [createdByUserId], references: [id])
+  createdByUserId Int
+
+  artistLinks ShowArtist[]
+}
+
+model ShowArtist {
+  id           Int      @id @default(autoincrement())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  /// Lower sorts first; optional billing role e.g. HEADLINE, SUPPORT
+  displayOrder Int      @default(0)
+  billingRole  String?
+
+  show   Show   @relation(fields: [showId], references: [id], onDelete: Cascade)
+  showId Int
+
+  artist   Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
+  artistId Int
+
+  @@unique([showId, artistId])
+}
