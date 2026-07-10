@@ -26,9 +26,11 @@ model User {
   sessions Session[]
 
   artists              Artist[]
-  showsCreated         Show[]       @relation("ShowCreatedBy")
-  roleInvitesSent      RoleInvite[] @relation("RoleInviteCreator")
-  roleInvitesFulfilled RoleInvite[] @relation("RoleInviteNewUser")
+  artistMemberships    ArtistMember[]
+  showsCreated         Show[]             @relation("ShowCreatedBy")
+  roleInvitesSent      RoleInvite[]       @relation("RoleInviteCreator")
+  roleInvitesFulfilled RoleInvite[]       @relation("RoleInviteNewUser")
+  showArtistInvitesSent ShowArtistInvite[]
 }
 
 model Session {
@@ -63,20 +65,20 @@ model Token {
 
 /// Invite for CREATOR or ADMIN before the user account exists (separate from password-reset Token).
 model RoleInvite {
-  id             Int       @id @default(autoincrement())
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  email          String
+  id           Int       @id @default(autoincrement())
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  email        String
   /// CREATOR | ADMIN
-  intendedRole   String
-  tokenHash      String    @unique
-  expiresAt      DateTime
-  consumedAt     DateTime?
+  intendedRole String
+  tokenHash    String    @unique
+  expiresAt    DateTime
+  consumedAt   DateTime?
 
-  createdBy   User @relation("RoleInviteCreator", fields: [createdByUserId], references: [id])
+  createdBy       User @relation("RoleInviteCreator", fields: [createdByUserId], references: [id])
   createdByUserId Int
 
-  newUser   User? @relation("RoleInviteNewUser", fields: [createdUserId], references: [id])
+  newUser       User? @relation("RoleInviteNewUser", fields: [createdUserId], references: [id])
   createdUserId Int?
 
   @@index([email])
@@ -98,11 +100,18 @@ model Location {
   shows Show[]
 }
 
-/// Minimal stub for future venue management; expanded in a later migration.
 model Venue {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           Int      @id @default(autoincrement())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  name         String
+  slug         String   @unique
+  addressLine1 String?
+  addressLine2 String?
+  city         String?
+  region       String?
+  postalCode   String?
+  country      String?
 
   shows Show[]
 }
@@ -115,12 +124,28 @@ model Artist {
   displayName       String?
   profilePictureUrl String?
   /// Map of platform key -> URL, e.g. { "instagram": "https://..." }
-  socialLinks       String? // JSON object as string until connector supports Json
+  socialLinks       String?
 
-  owner   User @relation(fields: [ownerUserId], references: [id])
+  owner       User           @relation(fields: [ownerUserId], references: [id])
   ownerUserId Int
+  members     ArtistMember[]
+  showLinks   ShowArtist[]
+}
 
-  showLinks ShowArtist[]
+/// Delegated edit access on an artist profile (owner remains on Artist.ownerUserId).
+model ArtistMember {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  /// EDITOR
+  role      String
+
+  artist   Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
+  artistId Int
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   Int
+
+  @@unique([artistId, userId])
 }
 
 model Show {
@@ -131,13 +156,12 @@ model Show {
   startsAt  DateTime
   /// External URL for ticket purchase.
   ticketPurchaseUrl String
-  /// Snapshot when no Location row is linked yet
-  addressLine1 String?
-  addressLine2 String?
-  city           String?
-  region         String?
-  postalCode     String?
-  country        String?
+  addressLine1      String?
+  addressLine2      String?
+  city              String?
+  region            String?
+  postalCode        String?
+  country           String?
 
   location   Location? @relation(fields: [locationId], references: [id])
   locationId Int?
@@ -145,19 +169,21 @@ model Show {
   venue   Venue? @relation(fields: [venueId], references: [id])
   venueId Int?
 
-  createdBy   User @relation("ShowCreatedBy", fields: [createdByUserId], references: [id])
+  createdBy       User @relation("ShowCreatedBy", fields: [createdByUserId], references: [id])
   createdByUserId Int
 
   artistLinks ShowArtist[]
 }
 
 model ShowArtist {
-  id           Int      @id @default(autoincrement())
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  /// Lower sorts first; optional billing role e.g. HEADLINE, SUPPORT
-  displayOrder Int      @default(0)
-  billingRole  String?
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  /// PENDING | ACCEPTED | DECLINED
+  participationStatus String   @default("ACCEPTED")
+  acceptedAt            DateTime?
+  displayOrder          Int      @default(0)
+  billingRole           String?
 
   show   Show   @relation(fields: [showId], references: [id], onDelete: Cascade)
   showId Int
@@ -165,5 +191,22 @@ model ShowArtist {
   artist   Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
   artistId Int
 
+  invite ShowArtistInvite?
+
   @@unique([showId, artistId])
+  @@index([participationStatus])
+}
+
+model ShowArtistInvite {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  tokenHash String    @unique
+  expiresAt DateTime
+  consumedAt DateTime?
+
+  showArtist   ShowArtist @relation(fields: [showArtistId], references: [id], onDelete: Cascade)
+  showArtistId Int        @unique
+
+  invitedBy       User @relation(fields: [invitedByUserId], references: [id])
+  invitedByUserId Int
 }
