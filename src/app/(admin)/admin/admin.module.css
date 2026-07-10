@@ -1,0 +1,124 @@
+.shell {
+  max-width: 56rem;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 3rem;
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e5e5;
+  font-size: 0.9375rem;
+}
+
+.nav a {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.nav a:hover {
+  text-decoration: underline;
+}
+
+.h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 1rem;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+
+.table th,
+.table td {
+  text-align: left;
+  padding: 0.5rem 0.75rem 0.5rem 0;
+  border-bottom: 1px solid #eee;
+  vertical-align: top;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin: 1rem 0;
+}
+
+.button {
+  display: inline-block;
+  padding: 0.4rem 0.75rem;
+  background: #171717;
+  color: #fff;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.875rem;
+  border: none;
+  cursor: pointer;
+}
+
+.buttonSecondary {
+  composes: button;
+  background: #fff;
+  color: #171717;
+  border: 1px solid #d4d4d4;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: 28rem;
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.input,
+.textarea {
+  padding: 0.5rem;
+  border: 1px solid #d4d4d4;
+  border-radius: 4px;
+  font: inherit;
+}
+
+.error {
+  color: #b91c1c;
+  font-size: 0.875rem;
+}
+
+.hint {
+  color: #525252;
+  font-size: 0.8125rem;
+}
+
+.checkboxList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 12rem;
+  overflow: auto;
+  border: 1px solid #e5e5e5;
+  border-radius: 4px;
+}
+
+.checkboxList li {
+  padding: 0.35rem 0.5rem;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.checkboxList label {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  font-size: 0.875rem;
+}
