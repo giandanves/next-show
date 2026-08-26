@@ -1,21 +1,16 @@
-"use client" // Error components must be Client components
+"use client"
 import React, {useEffect} from "react"
 
 export default function Error({error, reset}: {error: Error; reset: () => void}) {
   useEffect(() => {
-    // Log the error to an error reporting service
     console.error(error)
   }, [error])
 
   return (
-    <div>
+    <div style={{padding: "2rem", maxWidth: "40rem", margin: "0 auto", fontFamily: "system-ui"}}>
       <h2>Something went wrong!</h2>
-      <button
-        onClick={
-          // Attempt to recover by trying to re-render the segment
-          () => reset()
-        }
-      >
+      <p style={{color: "#b91c1c", wordBreak: "break-word"}}>{error.message}</p>
+      <button type="button" onClick={() => reset()}>
         Try again
       </button>
     </div>
