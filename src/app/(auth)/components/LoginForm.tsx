@@ -28,12 +28,12 @@ export const LoginForm = (props: LoginFormProps) => {
         onSubmit={async (values) => {
           try {
             await loginMutation(values)
-            router.refresh()
             if (next) {
               router.push(next)
             } else {
               router.push("/")
             }
+            router.refresh()
           } catch (error: any) {
             if (error instanceof AuthenticationError) {
               return {[FORM_ERROR]: "Sorry, those credentials are invalid"}

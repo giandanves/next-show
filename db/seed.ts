@@ -1,5 +1,5 @@
-import { PrismaClient } from "@prisma/client"
-import { SecurePassword } from "@blitzjs/auth/secure-password"
+import {PrismaClient} from "@prisma/client"
+import bcrypt from "bcryptjs"
 
 const prisma = new PrismaClient()
 
@@ -10,11 +10,11 @@ const ADMIN_PASSWORD = "admin"
 const ARTIST_SLUG = "giandanves"
 
 async function main() {
-  const hashedPassword = await SecurePassword.hash(ADMIN_PASSWORD)
+  const hashedPassword = await bcrypt.hash(ADMIN_PASSWORD, 10)
 
   const admin = await prisma.user.upsert({
-    where: { email: ADMIN_EMAIL },
-    update: { role: "ADMIN", hashedPassword },
+    where: {email: ADMIN_EMAIL},
+    update: {role: "ADMIN", hashedPassword},
     create: {
       email: ADMIN_EMAIL,
       role: "ADMIN",
@@ -24,8 +24,8 @@ async function main() {
   })
 
   const artist = await prisma.artist.upsert({
-    where: { slug: ARTIST_SLUG },
-    update: { ownerUserId: admin.id, displayName: "giandanves" },
+    where: {slug: ARTIST_SLUG},
+    update: {ownerUserId: admin.id, displayName: "giandanves"},
     create: {
       slug: ARTIST_SLUG,
       displayName: "giandanves",
@@ -66,8 +66,8 @@ async function main() {
   })
 
   if (existingShow) {
-    await prisma.showArtist.deleteMany({ where: { showId: existingShow.id } })
-    await prisma.show.delete({ where: { id: existingShow.id } })
+    await prisma.showArtist.deleteMany({where: {showId: existingShow.id}})
+    await prisma.show.delete({where: {id: existingShow.id}})
   }
 
   const show = await prisma.show.create({
@@ -83,18 +83,25 @@ async function main() {
 
   await prisma.showArtist.upsert({
     where: {
-      showId_artistId: { showId: show.id, artistId: artist.id },
+      showId_artistId: {showId: show.id, artistId: artist.id},
     },
-    update: { displayOrder: 0, billingRole: "HEADLINE" },
+    update: {
+      displayOrder: 0,
+      billingRole: "HEADLINE",
+      participationStatus: "ACCEPTED",
+      acceptedAt: new Date(),
+    },
     create: {
       showId: show.id,
       artistId: artist.id,
       displayOrder: 0,
       billingRole: "HEADLINE",
+      participationStatus: "ACCEPTED",
+      acceptedAt: new Date(),
     },
   })
 
-  console.log("Seed OK:", { adminEmail: ADMIN_EMAIL, artistSlug: ARTIST_SLUG, showId: show.id })
+  console.log("Seed OK:", {adminEmail: ADMIN_EMAIL, artistSlug: ARTIST_SLUG, showId: show.id})
 }
 
 main()
