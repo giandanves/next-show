@@ -9,11 +9,13 @@ import type {Role} from "types"
 import styles from "../admin.module.css"
 
 function AdminGate({children}: {children: ReactNode}) {
+  // useSuspenseQuery: this component only mounts after getCurrentUser resolves.
+  // null === logged out; never treat "loading" as logged out (that canceled the RPC).
   const user = useCurrentUser()
   const router = useRouter()
 
   useEffect(() => {
-    if (!user) {
+    if (user === null) {
       router.replace("/login?next=/admin")
       return
     }
@@ -22,8 +24,12 @@ function AdminGate({children}: {children: ReactNode}) {
     }
   }, [user, router])
 
-  if (!user || !isPlatformCreatorOrAdmin(user.role as Role)) {
-    return <p className={styles.hint}>Carregando admin…</p>
+  if (user === null) {
+    return <p className={styles.hint}>Redirecionando para login…</p>
+  }
+
+  if (!isPlatformCreatorOrAdmin(user.role as Role)) {
+    return <p className={styles.hint}>Sem permissão…</p>
   }
 
   return (
@@ -39,10 +45,10 @@ function AdminGate({children}: {children: ReactNode}) {
   )
 }
 
-/** Auth + shell via Blitz RPC (works on Vercel). Avoids server `invoke` in RSC. */
+/** Auth + shell via Blitz RPC. Avoids server `invoke` and loading/auth race. */
 export function AdminShell({children}: {children: ReactNode}) {
   return (
-    <Suspense fallback={<p className={styles.hint}>Carregando…</p>}>
+    <Suspense fallback={<p className={styles.hint}>Carregando sessão…</p>}>
       <AdminGate>{children}</AdminGate>
     </Suspense>
   )

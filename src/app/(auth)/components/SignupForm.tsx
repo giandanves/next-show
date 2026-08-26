@@ -4,7 +4,6 @@ import {Form, FORM_ERROR} from "src/app/components/Form"
 import signup from "../mutations/signup"
 import {Signup} from "../validations"
 import {useMutation} from "@blitzjs/rpc"
-import {useRouter} from "next/navigation"
 
 type SignupFormProps = {
   onSuccess?: () => void
@@ -12,7 +11,6 @@ type SignupFormProps = {
 
 export const SignupForm = (props: SignupFormProps) => {
   const [signupMutation] = useMutation(signup)
-  const router = useRouter()
 
   return (
     <div>
@@ -25,8 +23,8 @@ export const SignupForm = (props: SignupFormProps) => {
         onSubmit={async (values) => {
           try {
             await signupMutation(values)
-            router.refresh()
-            router.push("/")
+            props.onSuccess?.()
+            window.location.assign("/")
           } catch (error: any) {
             if (error.code === "P2002" && error.meta?.target?.includes("email")) {
               // This error comes from Prisma

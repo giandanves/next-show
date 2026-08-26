@@ -7,7 +7,6 @@ import login from "../mutations/login"
 import {Login} from "../validations"
 import {useMutation} from "@blitzjs/rpc"
 import {useSearchParams} from "next/navigation"
-import {useRouter} from "next/navigation"
 
 type LoginFormProps = {
   onSuccess?: (user: PromiseReturnType<typeof login>) => void
@@ -15,8 +14,8 @@ type LoginFormProps = {
 
 export const LoginForm = (props: LoginFormProps) => {
   const [loginMutation] = useMutation(login)
-  const router = useRouter()
   const next = useSearchParams()?.get("next")
+
   return (
     <>
       <h1>Login</h1>
@@ -27,21 +26,20 @@ export const LoginForm = (props: LoginFormProps) => {
         initialValues={{email: "", password: ""}}
         onSubmit={async (values) => {
           try {
-            await loginMutation(values)
-            if (next) {
-              router.push(next)
-            } else {
-              router.push("/")
-            }
-            router.refresh()
+            const user = await loginMutation(values)
+            props.onSuccess?.(user)
+            // Hard navigation so session cookies from the RPC response are
+            // definitely sent on the next document request (soft router.push
+            // raced and canceled getCurrentUser on /admin).
+            const dest = next && next.startsWith("/") ? next : "/"
+            window.location.assign(dest)
           } catch (error: any) {
             if (error instanceof AuthenticationError) {
               return {[FORM_ERROR]: "Sorry, those credentials are invalid"}
-            } else {
-              return {
-                [FORM_ERROR]:
-                  "Sorry, we had an unexpected error. Please try again. - " + error.toString(),
-              }
+            }
+            return {
+              [FORM_ERROR]:
+                "Sorry, we had an unexpected error. Please try again. - " + error.toString(),
             }
           }
         }}
