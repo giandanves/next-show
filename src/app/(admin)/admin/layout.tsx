@@ -7,8 +7,17 @@ import {isPlatformCreatorOrAdmin} from "src/lib/artistAccess"
 import type {Role} from "types"
 import styles from "./admin.module.css"
 
+export const dynamic = "force-dynamic"
+
 export default async function AdminLayout({children}: {children: ReactNode}) {
-  const user = await invoke(getCurrentUser, null)
+  let user: Awaited<ReturnType<typeof getCurrentUser>> = null
+  try {
+    user = await invoke(getCurrentUser, null)
+  } catch (error) {
+    console.error("[admin/layout] session failed", error)
+    redirect("/login?next=/admin")
+  }
+
   if (!user) redirect("/login?next=/admin")
   if (!isPlatformCreatorOrAdmin(user.role as Role)) redirect("/")
 

@@ -44,6 +44,19 @@ Local login after seed: `admin@next-show.local` / `admin` (see `db/seed.ts`).
 
 Commit the Postgres migration + schema changes, then push the branch you want to deploy.
 
+## Required on Vercel (Production)
+
+Without these, public pages may work but `/`, `/login`, and `/admin` break:
+
+| Name | Notes |
+|------|--------|
+| `DATABASE_URL` | Neon **pooled** URL |
+| `DIRECT_URL` | Neon **direct** URL |
+| `SESSION_SECRET_KEY` | **Required** — min 32 chars (`openssl rand -hex 32`). Blitz crashes auth pages without it. |
+| `APP_ORIGIN` | `https://your-app.vercel.app` |
+
+After changing env vars: **Deployments → ⋯ → Redeploy**.
+
 ## 4. Create the Vercel project
 
 1. Go to [https://vercel.com](https://vercel.com) → **Add New… → Project**.

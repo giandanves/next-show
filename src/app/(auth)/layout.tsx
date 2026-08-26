@@ -1,18 +1,9 @@
-import {redirect} from "next/navigation"
-import {getBlitzContext} from "../blitz-server"
-
-// Auth pages read session cookies — never statically prerender them.
+/**
+ * Auth pages must not call Blitz session helpers during RSC render on Vercel.
+ * Session is only needed when submitting login/signup (RPC + SESSION_SECRET_KEY).
+ */
 export const dynamic = "force-dynamic"
 
-export default async function AuthLayout({children}: {children: React.ReactNode}) {
-  try {
-    const ctx = await getBlitzContext()
-    if (ctx.session.userId) {
-      redirect("/")
-    }
-  } catch (error) {
-    console.error("[auth/layout] session check failed", error)
-  }
-
+export default function AuthLayout({children}: {children: React.ReactNode}) {
   return <>{children}</>
 }
