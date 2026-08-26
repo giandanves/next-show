@@ -8,7 +8,6 @@ import {Login} from "../validations"
 import {useMutation} from "@blitzjs/rpc"
 import {useSearchParams} from "next/navigation"
 import {useRouter} from "next/navigation"
-import type {Route} from "next"
 
 type LoginFormProps = {
   onSuccess?: (user: PromiseReturnType<typeof login>) => void
@@ -31,7 +30,7 @@ export const LoginForm = (props: LoginFormProps) => {
             await loginMutation(values)
             router.refresh()
             if (next) {
-              router.push(next as Route)
+              router.push(next)
             } else {
               router.push("/")
             }
