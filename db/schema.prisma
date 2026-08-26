@@ -2,8 +2,11 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  /// Pooled URL for the app (Neon "pooled" / `-pooler` host). Add `?pgbouncer=true` if required.
+  url       = env("DATABASE_URL")
+  /// Direct (non-pooled) URL for migrations. On Neon: use the non-pooler connection string.
+  directUrl = env("DIRECT_URL")
 }
 
 generator client {

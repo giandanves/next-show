@@ -16,16 +16,20 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## Environment Variables
 
-Ensure the `.env.local` file has required environment variables:
+Ensure the `.env` / `.env.local` file has required environment variables. See [`.env.example`](.env.example) and the full Vercel + Neon guide in [`docs/deploy-vercel-neon.md`](docs/deploy-vercel-neon.md).
 
 ```
-DATABASE_URL=postgresql://<YOUR_DB_USERNAME>@localhost:5432/next-show
+DATABASE_URL=postgresql://USER:PASSWORD@ep-xxxx-pooler.REGION.aws.neon.tech/neondb?sslmode=require&pgbouncer=true
+DIRECT_URL=postgresql://USER:PASSWORD@ep-xxxx.REGION.aws.neon.tech/neondb?sslmode=require
+SESSION_SECRET_KEY=at-least-32-characters-long-secret
+APP_ORIGIN=http://localhost:3000
 ```
 
 Ensure the `.env.test.local` file has required environment variables:
 
 ```
-DATABASE_URL=postgresql://<YOUR_DB_USERNAME>@localhost:5432/next-show_test
+DATABASE_URL=postgresql://USER:PASSWORD@localhost:5432/next-show_test
+DIRECT_URL=postgresql://USER:PASSWORD@localhost:5432/next-show_test
 ```
 
 ## Tests

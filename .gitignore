@@ -27,7 +27,12 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # local env files
+.env
 .env*.local
+
+# local sqlite (legacy; app now uses Postgres / Neon)
+/db/db/*.db
+/db/*.sqlite
 
 # vercel
 .vercel

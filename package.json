@@ -4,14 +4,16 @@
   "private": true,
   "scripts": {
     "dev": "blitz dev",
-    "build": "blitz build",
+    "build": "prisma generate && prisma migrate deploy && blitz build",
     "start": "blitz start",
     "studio": "blitz prisma studio",
+    "postinstall": "prisma generate",
     "lint": "eslint --ignore-path .gitignore --ext .js,.ts,.tsx .",
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
     "prepare": "husky install",
-    "db:seed": "prisma db seed"
+    "db:seed": "prisma db seed",
+    "db:migrate": "prisma migrate deploy"
   },
   "prisma": {
     "schema": "db/schema.prisma",
