@@ -1,10 +1,13 @@
+"use client"
+
 import Link from "next/link"
+import {Suspense} from "react"
+import {useQuery} from "@blitzjs/rpc"
 import getArtistsForAdmin from "src/app/artists/queries/getArtistsForAdmin"
-import {invoke} from "src/app/blitz-server"
 import styles from "../admin.module.css"
 
-export default async function AdminArtistsPage() {
-  const artists = await invoke(getArtistsForAdmin, null)
+function ArtistsTable() {
+  const [artists] = useQuery(getArtistsForAdmin, null)
 
   return (
     <>
@@ -24,7 +27,7 @@ export default async function AdminArtistsPage() {
           </tr>
         </thead>
         <tbody>
-          {artists.map((a) => (
+          {(artists ?? []).map((a) => (
             <tr key={a.id}>
               <td>{a.displayName ?? a.slug}</td>
               <td>
@@ -39,5 +42,13 @@ export default async function AdminArtistsPage() {
         </tbody>
       </table>
     </>
+  )
+}
+
+export default function AdminArtistsPage() {
+  return (
+    <Suspense fallback={<p className={styles.hint}>Carregando artistas…</p>}>
+      <ArtistsTable />
+    </Suspense>
   )
 }

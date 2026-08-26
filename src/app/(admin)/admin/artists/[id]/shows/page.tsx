@@ -1,20 +1,23 @@
+"use client"
+
 import Link from "next/link"
-import {notFound} from "next/navigation"
+import {Suspense} from "react"
+import {useParams} from "next/navigation"
+import {useQuery} from "@blitzjs/rpc"
 import getArtistForAdmin from "src/app/artists/queries/getArtistForAdmin"
 import getShowsForArtistAdmin from "src/app/shows/queries/getShowsForArtistAdmin"
-import {invoke} from "src/app/blitz-server"
 import {formatShowDateTime} from "src/lib/showFormatting"
 import styles from "../../../admin.module.css"
 
-export default async function ArtistShowsPage({params}: {params: Promise<{id: string}>}) {
-  const {id} = await params
-  const artistId = Number(id)
-  if (!Number.isFinite(artistId)) notFound()
+function ArtistShows() {
+  const params = useParams()
+  const artistId = Number(params?.id)
+  const [artist] = useQuery(getArtistForAdmin, {id: artistId}, {enabled: Number.isFinite(artistId)})
+  const [shows] = useQuery(getShowsForArtistAdmin, {artistId}, {enabled: Number.isFinite(artistId)})
 
-  const artist = await invoke(getArtistForAdmin, {id: artistId})
-  if (!artist) notFound()
-
-  const shows = await invoke(getShowsForArtistAdmin, {artistId})
+  if (!Number.isFinite(artistId) || !artist) {
+    return <p className={styles.error}>Artista não encontrado.</p>
+  }
 
   return (
     <>
@@ -35,10 +38,10 @@ export default async function ArtistShowsPage({params}: {params: Promise<{id: st
           </tr>
         </thead>
         <tbody>
-          {shows.map((s) => (
+          {(shows ?? []).map((s) => (
             <tr key={s.id}>
               <td>{s.title}</td>
-              <td>{formatShowDateTime(s.startsAt)}</td>
+              <td>{formatShowDateTime(new Date(s.startsAt))}</td>
               <td>{s.participationStatus}</td>
               <td>
                 <Link href={`/admin/artists/${artistId}/shows/${s.id}/edit`}>Editar</Link>
@@ -50,5 +53,13 @@ export default async function ArtistShowsPage({params}: {params: Promise<{id: st
         </tbody>
       </table>
     </>
+  )
+}
+
+export default function ArtistShowsPage() {
+  return (
+    <Suspense fallback={<p className={styles.hint}>Carregando shows…</p>}>
+      <ArtistShows />
+    </Suspense>
   )
 }

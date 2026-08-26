@@ -1,25 +1,25 @@
-import {notFound} from "next/navigation"
+"use client"
+
+import {Suspense} from "react"
+import {useParams} from "next/navigation"
+import {useQuery} from "@blitzjs/rpc"
 import getArtistForAdmin from "src/app/artists/queries/getArtistForAdmin"
 import getShowForAdmin from "src/app/shows/queries/getShowForAdmin"
-import {invoke} from "src/app/blitz-server"
 import {ShowForm} from "../../../../../components/ShowForm"
 import styles from "../../../../../admin.module.css"
 
-export default async function EditArtistShowPage({
-  params,
-}: {
-  params: Promise<{id: string; showId: string}>
-}) {
-  const {id, showId: showIdParam} = await params
-  const artistId = Number(id)
-  const showId = Number(showIdParam)
-  if (!Number.isFinite(artistId) || !Number.isFinite(showId)) notFound()
+function EditShow() {
+  const params = useParams()
+  const artistId = Number(params?.id)
+  const showId = Number(params?.showId)
+  const enabled = Number.isFinite(artistId) && Number.isFinite(showId)
 
-  const artist = await invoke(getArtistForAdmin, {id: artistId})
-  if (!artist) notFound()
+  const [artist] = useQuery(getArtistForAdmin, {id: artistId}, {enabled})
+  const [show] = useQuery(getShowForAdmin, {showId, artistId}, {enabled})
 
-  const show = await invoke(getShowForAdmin, {showId, artistId})
-  if (!show) notFound()
+  if (!enabled || !artist || !show) {
+    return <p className={styles.error}>Show não encontrado.</p>
+  }
 
   return (
     <>
@@ -30,7 +30,7 @@ export default async function EditArtistShowPage({
         mode="edit"
         initial={{
           title: show.title,
-          startsAt: show.startsAt,
+          startsAt: new Date(show.startsAt),
           ticketPurchaseUrl: show.ticketPurchaseUrl,
           addressLine1: show.addressLine1 ?? show.location?.addressLine1 ?? null,
           city: show.city ?? show.location?.city ?? null,
@@ -38,5 +38,13 @@ export default async function EditArtistShowPage({
         }}
       />
     </>
+  )
+}
+
+export default function EditArtistShowPage() {
+  return (
+    <Suspense fallback={<p className={styles.hint}>Carregando…</p>}>
+      <EditShow />
+    </Suspense>
   )
 }

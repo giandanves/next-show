@@ -1,20 +1,23 @@
+"use client"
+
 import Link from "next/link"
-import {notFound} from "next/navigation"
+import {Suspense} from "react"
+import {useParams} from "next/navigation"
+import {useQuery} from "@blitzjs/rpc"
 import getArtistForAdmin from "src/app/artists/queries/getArtistForAdmin"
 import getArtistMembers from "src/app/artists/queries/getArtistMembers"
-import {invoke} from "src/app/blitz-server"
 import {MemberForm} from "../../../components/MemberForm"
 import styles from "../../../admin.module.css"
 
-export default async function ArtistMembersPage({params}: {params: Promise<{id: string}>}) {
-  const {id} = await params
-  const artistId = Number(id)
-  if (!Number.isFinite(artistId)) notFound()
+function ArtistMembers() {
+  const params = useParams()
+  const artistId = Number(params?.id)
+  const [artist] = useQuery(getArtistForAdmin, {id: artistId}, {enabled: Number.isFinite(artistId)})
+  const [members] = useQuery(getArtistMembers, {artistId}, {enabled: Number.isFinite(artistId)})
 
-  const artist = await invoke(getArtistForAdmin, {id: artistId})
-  if (!artist) notFound()
-
-  const members = await invoke(getArtistMembers, {artistId})
+  if (!Number.isFinite(artistId) || !artist) {
+    return <p className={styles.error}>Artista não encontrado.</p>
+  }
 
   return (
     <>
@@ -22,7 +25,15 @@ export default async function ArtistMembersPage({params}: {params: Promise<{id: 
       <p className={styles.hint}>
         <Link href={`/admin/artists/${artistId}/edit`}>Voltar ao artista</Link>
       </p>
-      <MemberForm artistId={artistId} members={members} />
+      <MemberForm artistId={artistId} members={members ?? []} />
     </>
+  )
+}
+
+export default function ArtistMembersPage() {
+  return (
+    <Suspense fallback={<p className={styles.hint}>Carregando…</p>}>
+      <ArtistMembers />
+    </Suspense>
   )
 }
