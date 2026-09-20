@@ -1,14 +1,19 @@
 import db from "db"
+import {PUBLICATION_STATUS_PUBLISHED} from "src/lib/publicationStatus"
 
 /** Server-only read for public artist pages (no Blitz invoke / RPC bundle). */
 export async function fetchArtistBySlug(slug: string) {
-  return db.artist.findUnique({
-    where: {slug},
+  return db.artist.findFirst({
+    where: {
+      slug,
+      publicationStatus: PUBLICATION_STATUS_PUBLISHED,
+    },
     select: {
       slug: true,
       displayName: true,
       profilePictureUrl: true,
       socialLinks: true,
+      publicationStatus: true,
       showLinks: {
         where: {participationStatus: "ACCEPTED"},
         orderBy: {show: {startsAt: "asc"}},

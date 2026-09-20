@@ -1,6 +1,6 @@
 import {AuthorizationError, Ctx} from "blitz"
 import type {Role} from "types"
-import {isPlatformCreatorOrAdmin} from "./artistAccess"
+import {isPlatformAdmin, isPlatformCreatorOrAdmin} from "./artistAccess"
 
 export function requireAuthenticated(ctx: Ctx): {userId: number; role: Role} {
   if (!ctx.session.userId) throw new AuthorizationError()
@@ -10,5 +10,11 @@ export function requireAuthenticated(ctx: Ctx): {userId: number; role: Role} {
 export function requireCreatorOrAdmin(ctx: Ctx): {userId: number; role: Role} {
   const session = requireAuthenticated(ctx)
   if (!isPlatformCreatorOrAdmin(session.role)) throw new AuthorizationError()
+  return session
+}
+
+export function requireAdmin(ctx: Ctx): {userId: number; role: Role} {
+  const session = requireAuthenticated(ctx)
+  if (!isPlatformAdmin(session.role)) throw new AuthorizationError()
   return session
 }
