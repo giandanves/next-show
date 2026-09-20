@@ -15,6 +15,7 @@ export default async function getArtistForAdmin({id}: {id: number}, ctx: Ctx) {
       displayName: true,
       profilePictureUrl: true,
       socialLinks: true,
+      publicationStatus: true,
     },
   })
 }

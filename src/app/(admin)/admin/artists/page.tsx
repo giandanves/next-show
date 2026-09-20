@@ -22,6 +22,7 @@ function ArtistsTable() {
           <tr>
             <th>Nome</th>
             <th>Slug</th>
+            <th>Status</th>
             <th>Owner</th>
             <th />
           </tr>
@@ -31,8 +32,13 @@ function ArtistsTable() {
             <tr key={a.id}>
               <td>{a.displayName ?? a.slug}</td>
               <td>
-                <Link href={`/${a.slug}`}>{a.slug}</Link>
+                {a.publicationStatus === "PUBLISHED" ? (
+                  <Link href={`/${a.slug}`}>{a.slug}</Link>
+                ) : (
+                  a.slug
+                )}
               </td>
+              <td>{a.publicationStatus}</td>
               <td>{a.owner.email}</td>
               <td>
                 <Link href={`/admin/artists/${a.id}/edit`}>Editar</Link>

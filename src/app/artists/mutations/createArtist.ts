@@ -1,10 +1,11 @@
 import {Ctx} from "blitz"
 import db from "db"
 import {CreateArtist} from "../validations"
+import {initialPublicationStatus} from "src/lib/publicationStatus"
 import {requireCreatorOrAdmin} from "src/lib/sessionGuards"
 
 export default async function createArtist(input: unknown, ctx: Ctx) {
-  const {userId} = requireCreatorOrAdmin(ctx)
+  const {userId, role} = requireCreatorOrAdmin(ctx)
   const data = CreateArtist.parse(input)
 
   return db.artist.create({
@@ -14,7 +15,8 @@ export default async function createArtist(input: unknown, ctx: Ctx) {
       profilePictureUrl: data.profilePictureUrl || null,
       socialLinks: data.socialLinks?.trim() || null,
       ownerUserId: userId,
+      publicationStatus: initialPublicationStatus(role),
     },
-    select: {id: true, slug: true},
+    select: {id: true, slug: true, publicationStatus: true},
   })
 }

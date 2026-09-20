@@ -14,6 +14,7 @@ export default async function getArtistsForAdmin(_: null, ctx: Ctx) {
         slug: true,
         displayName: true,
         ownerUserId: true,
+        publicationStatus: true,
         owner: {select: {email: true}},
       },
     })
@@ -32,6 +33,7 @@ export default async function getArtistsForAdmin(_: null, ctx: Ctx) {
       slug: true,
       displayName: true,
       ownerUserId: true,
+      publicationStatus: true,
       owner: {select: {email: true}},
     },
   })

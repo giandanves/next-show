@@ -25,11 +25,16 @@ async function main() {
 
   const artist = await prisma.artist.upsert({
     where: {slug: ARTIST_SLUG},
-    update: {ownerUserId: admin.id, displayName: "giandanves"},
+    update: {
+      ownerUserId: admin.id,
+      displayName: "giandanves",
+      publicationStatus: "PUBLISHED",
+    },
     create: {
       slug: ARTIST_SLUG,
       displayName: "giandanves",
       ownerUserId: admin.id,
+      publicationStatus: "PUBLISHED",
     },
   })
 
