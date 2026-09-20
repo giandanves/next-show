@@ -1,12 +1,12 @@
 import Link from "next/link"
+import {HomeAdminCta} from "./components/HomeAdminCta"
 import styles from "./styles/Home.module.css"
 
 export const dynamic = "force-dynamic"
 
 /**
  * Home avoids Blitz `invoke` / session on the server.
- * Touching session in RSC on Vercel crashes the page when SESSION_SECRET_KEY
- * is missing or Blitz auth fails during render.
+ * Admin CTA is client-side (useSuspenseQuery) so CREATOR/ADMIN see it after login.
  */
 export default function Home() {
   return (
@@ -37,9 +37,7 @@ export default function Home() {
                 <Link href="/signup" className={styles.loginButton}>
                   <strong>Sign up</strong>
                 </Link>
-                <Link href="/admin" className={styles.loginButton}>
-                  <strong>Admin</strong>
-                </Link>
+                <HomeAdminCta />
               </div>
             </div>
           </div>
