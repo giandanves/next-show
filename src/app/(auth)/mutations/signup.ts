@@ -1,18 +1,32 @@
+import {Ctx} from "blitz"
 import db from "db"
 import {Password} from "src/lib/password"
+import type {Role} from "types"
+import {Signup} from "../validations"
 
-export default async function signup(input: {password: string; email: string}, ctx: any) {
-  const blitzContext = ctx
-  const hashedPassword = await Password.hash((input.password as string) || "test-password")
-  const email = (input.email as string) || "test" + Math.random() + "@test.com"
+export default async function signup(input: unknown, ctx: Ctx) {
+  const data = Signup.parse(input)
+  const role: Role = data.isProducer ? "CREATOR" : "USER"
+  const hashedPassword = await Password.hash(data.password)
+
   const user = await db.user.create({
-    data: {email, hashedPassword},
+    data: {
+      email: data.email,
+      name: data.name,
+      hashedPassword,
+      role,
+    },
   })
 
-  await blitzContext.session.$create({
+  await ctx.session.$create({
     userId: user.id,
-    role: "USER",
+    role,
   })
 
-  return {userId: blitzContext.session.userId, ...user, email: input.email}
+  return {
+    userId: user.id,
+    email: user.email,
+    name: user.name,
+    role: user.role as Role,
+  }
 }
