@@ -1,3 +1,4 @@
+import Link from "next/link"
 import {notFound} from "next/navigation"
 import {fetchArtistBySlug} from "../artists/artistPublicData"
 import {
@@ -51,7 +52,9 @@ export default async function ArtistPublicPage({
                 const title = show.title?.trim() || "Show"
                 return (
                   <li key={show.id} className={styles.showItem}>
-                    <h3 className={styles.showTitle}>{title}</h3>
+                    <h3 className={styles.showTitle}>
+                      <Link href={`/shows/${show.id}`}>{title}</Link>
+                    </h3>
                     <p className={styles.showDate}>
                       <time dateTime={show.startsAt.toISOString()}>
                         {formatShowDateTime(show.startsAt)}
