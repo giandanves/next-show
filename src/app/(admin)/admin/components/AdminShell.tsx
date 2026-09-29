@@ -4,7 +4,7 @@ import Link from "next/link"
 import {useRouter} from "next/navigation"
 import {ReactNode, Suspense, useEffect} from "react"
 import {useCurrentUser} from "src/app/users/hooks/useCurrentUser"
-import {isPlatformCreatorOrAdmin} from "src/lib/artistAccess"
+import {isPlatformAdmin, isPlatformCreatorOrAdmin} from "src/lib/artistAccess"
 import type {Role} from "types"
 import styles from "../admin.module.css"
 
@@ -13,6 +13,7 @@ function AdminGate({children}: {children: ReactNode}) {
   // null === logged out; never treat "loading" as logged out (that canceled the RPC).
   const user = useCurrentUser()
   const router = useRouter()
+  const role = user?.role as Role | undefined
 
   useEffect(() => {
     if (user === null) {
@@ -38,6 +39,9 @@ function AdminGate({children}: {children: ReactNode}) {
         <Link href="/admin">Dashboard</Link>
         <Link href="/admin/artists">Artistas</Link>
         <Link href="/admin/venues">Venues</Link>
+        {role && isPlatformAdmin(role) && (
+          <Link href="/admin/approvals">Aprovações</Link>
+        )}
         <Link href="/">Site público</Link>
       </nav>
       {children}
