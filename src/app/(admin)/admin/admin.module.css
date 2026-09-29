@@ -29,6 +29,12 @@
   margin: 0 0 1rem;
 }
 
+.h2 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 1.75rem 0 0.75rem;
+}
+
 .table {
   width: 100%;
   border-collapse: collapse;
