@@ -301,3 +301,15 @@
     flex-wrap: wrap;
   }
 }
+
+.city {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.cityHint {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #525252;
+}

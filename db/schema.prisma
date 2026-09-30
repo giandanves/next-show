@@ -101,8 +101,18 @@ model Location {
   postalCode    String?
   country       String?
   googlePlaceId String?
+  /// Canonical address returned by the geocoder (validated on save).
+  formattedAddress String?
+  latitude         Float?
+  longitude        Float?
+  /// Geocoder that validated this address, e.g. "osm".
+  geoProvider      String?
+  /// Provider place reference, e.g. OSM "W1228726668".
+  geoPlaceId       String?
 
   shows Show[]
+
+  @@unique([geoProvider, geoPlaceId])
 }
 
 model Venue {

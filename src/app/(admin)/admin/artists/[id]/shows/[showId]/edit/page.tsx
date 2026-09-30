@@ -5,6 +5,7 @@ import {useParams} from "next/navigation"
 import {useQuery} from "@blitzjs/rpc"
 import getArtistForAdmin from "src/app/artists/queries/getArtistForAdmin"
 import getShowForAdmin from "src/app/shows/queries/getShowForAdmin"
+import {formatShowAddress} from "src/lib/showFormatting"
 import {ShowForm} from "../../../../../components/ShowForm"
 import styles from "../../../../../admin.module.css"
 
@@ -32,9 +33,7 @@ function EditShow() {
           title: show.title,
           startsAt: new Date(show.startsAt),
           ticketPurchaseUrl: show.ticketPurchaseUrl,
-          addressLine1: show.addressLine1 ?? show.location?.addressLine1 ?? null,
-          city: show.city ?? show.location?.city ?? null,
-          region: show.region ?? show.location?.region ?? null,
+          addressLabel: show.location?.formattedAddress || formatShowAddress(show) || null,
         }}
       />
     </>

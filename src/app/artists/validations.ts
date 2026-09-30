@@ -18,22 +18,30 @@ export const UpdateArtist = CreateArtist.extend({
   id: z.number().int().positive(),
 })
 
+/** Geocoder place reference picked from address suggestions, e.g. "W1228726668". */
+export const PlaceRef = z
+  .string()
+  .regex(/^[NWR]\d+$/, "Pick an address from the suggestions")
+
+/** Applied only when the picked place is a street without a mapped number. */
+export const HouseNumber = z
+  .string()
+  .trim()
+  .regex(/^\d{1,6}[A-Za-z]?$/, "House number must be digits, optionally followed by a letter")
+
 export const CreateShow = z.object({
   artistId: z.number().int().positive(),
   title: z.string().min(1).max(200),
   startsAt: z.string().min(1),
   ticketPurchaseUrl: z.string().url(),
-  locationId: z.number().int().positive().optional().nullable(),
-  addressLine1: z.string().optional(),
-  addressLine2: z.string().optional(),
-  city: z.string().optional(),
-  region: z.string().optional(),
-  postalCode: z.string().optional(),
-  country: z.string().optional(),
+  placeRef: PlaceRef,
+  houseNumber: HouseNumber.optional(),
 })
 
 export const UpdateShow = CreateShow.extend({
   showId: z.number().int().positive(),
+  /** Omit to keep the current address. */
+  placeRef: PlaceRef.optional(),
 }).omit({artistId: true})
 
 export const AddArtistMember = z.object({
