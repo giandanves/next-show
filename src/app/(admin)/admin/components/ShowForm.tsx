@@ -4,6 +4,7 @@ import {useRouter} from "next/navigation"
 import {useMutation} from "@blitzjs/rpc"
 import createShowForArtist from "src/app/shows/mutations/createShowForArtist"
 import updateShow from "src/app/shows/mutations/updateShow"
+import {AddressAutocomplete} from "./AddressAutocomplete"
 import styles from "../admin.module.css"
 
 type ShowFormProps = {
@@ -14,9 +15,7 @@ type ShowFormProps = {
     title: string | null
     startsAt: Date
     ticketPurchaseUrl: string
-    addressLine1: string | null
-    city: string | null
-    region: string | null
+    addressLabel: string | null
   }
 }
 
@@ -38,21 +37,21 @@ export function ShowForm({artistId, mode, showId, initial}: ShowFormProps) {
       onSubmit={async (e) => {
         e.preventDefault()
         const fd = new FormData(e.currentTarget)
+        const placeRef = String(fd.get("placeRef") ?? "")
+        const houseNumber = String(fd.get("houseNumber") ?? "").trim()
         const payload = {
           title: String(fd.get("title") ?? ""),
           startsAt: String(fd.get("startsAt") ?? ""),
           ticketPurchaseUrl: String(fd.get("ticketPurchaseUrl") ?? ""),
-          addressLine1: String(fd.get("addressLine1") ?? ""),
-          city: String(fd.get("city") ?? ""),
-          region: String(fd.get("region") ?? ""),
+          houseNumber: houseNumber || undefined,
         }
         try {
           if (mode === "create") {
-            const created = await createMutation({...payload, artistId})
+            const created = await createMutation({...payload, placeRef, artistId})
             router.push(`/admin/artists/${artistId}/shows/${created.id}/edit`)
             router.refresh()
           } else if (showId) {
-            await updateMutation({...payload, showId})
+            await updateMutation({...payload, placeRef: placeRef || undefined, showId})
             router.refresh()
           }
         } catch (err) {
@@ -78,18 +77,13 @@ export function ShowForm({artistId, mode, showId, initial}: ShowFormProps) {
           defaultValue={initial?.ticketPurchaseUrl ?? ""}
         />
       </label>
-      <label className={styles.label}>
-        Endereço (linha 1)
-        <input className={styles.input} name="addressLine1" defaultValue={initial?.addressLine1 ?? ""} />
-      </label>
-      <label className={styles.label}>
-        Cidade
-        <input className={styles.input} name="city" defaultValue={initial?.city ?? ""} />
-      </label>
-      <label className={styles.label}>
-        Estado
-        <input className={styles.input} name="region" defaultValue={initial?.region ?? ""} />
-      </label>
+      <AddressAutocomplete
+        name="placeRef"
+        houseNumberName="houseNumber"
+        label="Local"
+        initialLabel={initial?.addressLabel}
+        required={mode === "create"}
+      />
       <button type="submit" className={styles.button}>
         {mode === "create" ? "Criar show" : "Salvar show"}
       </button>

@@ -4,6 +4,7 @@ import {UpdateShow} from "src/app/artists/validations"
 import {isPlatformAdmin} from "src/lib/artistAccess"
 import {canEditArtist} from "src/lib/artistAccess"
 import {loadArtistAccessInput} from "src/lib/artistAccessDb"
+import {resolveLocationId} from "src/lib/geo/locationDb"
 import {requireCreatorOrAdmin} from "src/lib/sessionGuards"
 
 export default async function updateShow(input: unknown, ctx: Ctx) {
@@ -29,19 +30,26 @@ export default async function updateShow(input: unknown, ctx: Ctx) {
   const startsAt = new Date(data.startsAt)
   if (Number.isNaN(startsAt.getTime())) throw new Error("Invalid startsAt date")
 
+  // Legacy free-text address fields are cleared once a validated Location is set.
+  const addressData = data.placeRef
+    ? {
+        locationId: await resolveLocationId(data.placeRef, data.houseNumber),
+        addressLine1: null,
+        addressLine2: null,
+        city: null,
+        region: null,
+        postalCode: null,
+        country: null,
+      }
+    : {}
+
   return db.show.update({
     where: {id: data.showId},
     data: {
       title: data.title,
       startsAt,
       ticketPurchaseUrl: data.ticketPurchaseUrl,
-      locationId: data.locationId ?? null,
-      addressLine1: data.addressLine1 || null,
-      addressLine2: data.addressLine2 || null,
-      city: data.city || null,
-      region: data.region || null,
-      postalCode: data.postalCode || null,
-      country: data.country || null,
+      ...addressData,
     },
     select: {id: true},
   })

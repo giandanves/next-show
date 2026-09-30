@@ -1,5 +1,6 @@
 import Link from "next/link"
 import {HomeAdminCta} from "./components/HomeAdminCta"
+import {HomeLocation} from "./components/HomeLocation"
 import styles from "./styles/Home.module.css"
 
 export const dynamic = "force-dynamic"
@@ -23,6 +24,7 @@ export default function Home() {
           <div className={styles.wrapper}>
             <div className={styles.header}>
               <h1>next-show</h1>
+              <HomeLocation />
               <p style={{marginTop: "0.75rem", maxWidth: "28rem"}}>
                 Página pública do artista, área admin e convites de participação.
               </p>
