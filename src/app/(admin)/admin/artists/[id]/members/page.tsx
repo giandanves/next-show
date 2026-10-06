@@ -7,7 +7,7 @@ import {useQuery} from "@blitzjs/rpc"
 import getArtistForAdmin from "src/app/artists/queries/getArtistForAdmin"
 import getArtistMembers from "src/app/artists/queries/getArtistMembers"
 import {MemberForm} from "../../../components/MemberForm"
-import styles from "../../../admin.module.css"
+import {ui} from "../../../ui"
 
 function ArtistMembers() {
   const params = useParams()
@@ -16,13 +16,13 @@ function ArtistMembers() {
   const [members] = useQuery(getArtistMembers, {artistId}, {enabled: Number.isFinite(artistId)})
 
   if (!Number.isFinite(artistId) || !artist) {
-    return <p className={styles.error}>Artista não encontrado.</p>
+    return <p className={ui.error}>Artista não encontrado.</p>
   }
 
   return (
     <>
-      <h1 className={styles.h1}>Membros — {artist.displayName ?? artist.slug}</h1>
-      <p className={styles.hint}>
+      <h1 className={ui.h1}>Membros — {artist.displayName ?? artist.slug}</h1>
+      <p className={ui.hint}>
         <Link href={`/admin/artists/${artistId}/edit`}>Voltar ao artista</Link>
       </p>
       <MemberForm artistId={artistId} members={members ?? []} />
@@ -32,7 +32,7 @@ function ArtistMembers() {
 
 export default function ArtistMembersPage() {
   return (
-    <Suspense fallback={<p className={styles.hint}>Carregando…</p>}>
+    <Suspense fallback={<p className={ui.hint}>Carregando…</p>}>
       <ArtistMembers />
     </Suspense>
   )

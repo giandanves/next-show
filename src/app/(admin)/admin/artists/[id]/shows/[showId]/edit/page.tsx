@@ -7,7 +7,7 @@ import getArtistForAdmin from "src/app/artists/queries/getArtistForAdmin"
 import getShowForAdmin from "src/app/shows/queries/getShowForAdmin"
 import {formatShowAddress} from "src/lib/showFormatting"
 import {ShowForm} from "../../../../../components/ShowForm"
-import styles from "../../../../../admin.module.css"
+import {ui} from "../../../../../ui"
 
 function EditShow() {
   const params = useParams()
@@ -19,12 +19,12 @@ function EditShow() {
   const [show] = useQuery(getShowForAdmin, {showId, artistId}, {enabled})
 
   if (!enabled || !artist || !show) {
-    return <p className={styles.error}>Show não encontrado.</p>
+    return <p className={ui.error}>Show não encontrado.</p>
   }
 
   return (
     <>
-      <h1 className={styles.h1}>Editar show — {artist.displayName ?? artist.slug}</h1>
+      <h1 className={ui.h1}>Editar show — {artist.displayName ?? artist.slug}</h1>
       <ShowForm
         artistId={artistId}
         showId={showId}
@@ -42,7 +42,7 @@ function EditShow() {
 
 export default function EditArtistShowPage() {
   return (
-    <Suspense fallback={<p className={styles.hint}>Carregando…</p>}>
+    <Suspense fallback={<p className={ui.hint}>Carregando…</p>}>
       <EditShow />
     </Suspense>
   )

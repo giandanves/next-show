@@ -5,7 +5,7 @@ import {useMutation} from "@blitzjs/rpc"
 import createVenue from "src/app/venues/mutations/createVenue"
 import updateVenue from "src/app/venues/mutations/updateVenue"
 import {AddressAutocomplete} from "./AddressAutocomplete"
-import styles from "../admin.module.css"
+import {ui} from "../ui"
 
 type VenueFormProps = {
   mode: "create" | "edit"
@@ -24,7 +24,7 @@ export function VenueForm({mode, initial}: VenueFormProps) {
 
   return (
     <form
-      className={styles.form}
+      className={ui.form}
       onSubmit={async (e) => {
         e.preventDefault()
         const fd = new FormData(e.currentTarget)
@@ -53,14 +53,14 @@ export function VenueForm({mode, initial}: VenueFormProps) {
         }
       }}
     >
-      <label className={styles.label}>
+      <label className={ui.label}>
         Nome
-        <input className={styles.input} name="name" required defaultValue={initial?.name ?? ""} />
+        <input className={ui.input} name="name" required defaultValue={initial?.name ?? ""} />
       </label>
-      <label className={styles.label}>
+      <label className={ui.label}>
         Slug (URL)
         <input
-          className={styles.input}
+          className={ui.input}
           name="slug"
           required
           defaultValue={initial?.slug ?? ""}
@@ -74,7 +74,7 @@ export function VenueForm({mode, initial}: VenueFormProps) {
         initialLabel={initial?.addressLabel}
         required={mode === "create"}
       />
-      <button type="submit" className={styles.button}>
+      <button type="submit" className={ui.button}>
         {mode === "create" ? "Criar venue" : "Salvar"}
       </button>
     </form>

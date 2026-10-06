@@ -10,7 +10,7 @@ import {formatShowAddress} from "src/lib/showFormatting"
 import type {Role} from "types"
 import {TransferVenueOwnership} from "../../../components/TransferVenueOwnership"
 import {VenueForm} from "../../../components/VenueForm"
-import styles from "../../../admin.module.css"
+import {ui} from "../../../ui"
 
 function EditVenue() {
   const params = useParams()
@@ -23,7 +23,7 @@ function EditVenue() {
   )
 
   if (!Number.isFinite(venueId) || !venue) {
-    return <p className={styles.error}>Venue não encontrada.</p>
+    return <p className={ui.error}>Venue não encontrada.</p>
   }
 
   const addressLabel =
@@ -41,8 +41,8 @@ function EditVenue() {
 
   return (
     <>
-      <h1 className={styles.h1}>Editar venue</h1>
-      <p className={styles.hint}>
+      <h1 className={ui.h1}>Editar venue</h1>
+      <p className={ui.hint}>
         Status: {venue.publicationStatus} · Owner:{" "}
         {venue.owner.name ? `${venue.owner.name} (${venue.owner.email})` : venue.owner.email}
       </p>
@@ -68,7 +68,7 @@ function EditVenue() {
 
 export default function EditVenuePage() {
   return (
-    <Suspense fallback={<p className={styles.hint}>Carregando…</p>}>
+    <Suspense fallback={<p className={ui.hint}>Carregando…</p>}>
       <EditVenue />
     </Suspense>
   )

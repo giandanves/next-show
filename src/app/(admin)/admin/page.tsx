@@ -5,22 +5,22 @@ import {Suspense} from "react"
 import {useCurrentUser} from "src/app/users/hooks/useCurrentUser"
 import {isPlatformAdmin} from "src/lib/artistAccess"
 import type {Role} from "types"
-import styles from "./admin.module.css"
+import {ui} from "./ui"
 
 function AdminDashboardLinks() {
   const user = useCurrentUser()
   const isAdmin = user && isPlatformAdmin(user.role as Role)
 
   return (
-    <div className={styles.actions}>
-      <Link href="/admin/artists" className={styles.button}>
+    <div className={ui.actions}>
+      <Link href="/admin/artists" className={ui.button}>
         Artistas
       </Link>
-      <Link href="/admin/venues" className={styles.buttonSecondary}>
+      <Link href="/admin/venues" className={ui.buttonSecondary}>
         Venues
       </Link>
       {isAdmin && (
-        <Link href="/admin/approvals" className={styles.buttonSecondary}>
+        <Link href="/admin/approvals" className={ui.buttonSecondary}>
           Aprovações
         </Link>
       )}
@@ -31,9 +31,9 @@ function AdminDashboardLinks() {
 export default function AdminDashboardPage() {
   return (
     <>
-      <h1 className={styles.h1}>Admin</h1>
-      <p className={styles.hint}>Gerencie artistas, shows e venues.</p>
-      <Suspense fallback={<div className={styles.actions} />}>
+      <h1 className={ui.h1}>Admin</h1>
+      <p className={ui.hint}>Gerencie artistas, shows e venues.</p>
+      <Suspense fallback={<div className={ui.actions} />}>
         <AdminDashboardLinks />
       </Suspense>
     </>

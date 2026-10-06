@@ -4,7 +4,7 @@ import {useEffect, useState} from "react"
 import {useMutation, useQuery} from "@blitzjs/rpc"
 import transferVenueOwnership from "src/app/venues/mutations/transferVenueOwnership"
 import searchEligibleVenueOwners from "src/app/venues/queries/searchEligibleVenueOwners"
-import styles from "../admin.module.css"
+import {ui} from "../ui"
 
 type TransferVenueOwnershipProps = {
   venueId: number
@@ -38,15 +38,15 @@ export function TransferVenueOwnership({
   const options = (candidates ?? []).filter((u) => u.id !== currentOwnerUserId)
 
   return (
-    <section className={styles.form}>
-      <h2 className={styles.h2}>Transferir ownership</h2>
-      <p className={styles.hint}>
+    <section className={ui.form}>
+      <h2 className={ui.h2}>Transferir ownership</h2>
+      <p className={ui.hint}>
         Um ADMIN pode criar a venue e depois passar a ownership completa para um CREATOR.
       </p>
-      <label className={styles.label}>
+      <label className={ui.label}>
         Buscar CREATOR ou ADMIN
         <input
-          className={styles.input}
+          className={ui.input}
           value={query}
           placeholder="Email ou nome"
           autoComplete="off"
@@ -59,12 +59,12 @@ export function TransferVenueOwnership({
       </label>
 
       {options.length > 0 && (
-        <ul className={styles.suggestions} role="listbox">
+        <ul className={ui.suggestions} role="listbox">
           {options.map((u) => (
             <li key={u.id} role="option" aria-selected={selectedUserId === u.id}>
               <button
                 type="button"
-                className={styles.suggestionButton}
+                className={ui.suggestionButton}
                 onClick={() => {
                   setSelectedUserId(u.id)
                   setQuery(u.name ? `${u.name} (${u.email})` : u.email)
@@ -78,14 +78,14 @@ export function TransferVenueOwnership({
       )}
 
       {error && (
-        <p className={styles.error} role="alert">
+        <p className={ui.error} role="alert">
           {error}
         </p>
       )}
 
       <button
         type="button"
-        className={styles.button}
+        className={ui.button}
         disabled={!selectedUserId || busy}
         onClick={async () => {
           if (!selectedUserId) return

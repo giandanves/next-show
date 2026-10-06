@@ -1,5 +1,5 @@
-import { forwardRef, PropsWithoutRef } from "react"
-import { useField, useFormikContext, ErrorMessage } from "formik"
+import {forwardRef, PropsWithoutRef} from "react"
+import {useField, useFormikContext, ErrorMessage} from "formik"
 
 export interface LabeledTextFieldProps extends PropsWithoutRef<React.JSX.IntrinsicElements["input"]> {
   /** Field name. */
@@ -12,44 +12,33 @@ export interface LabeledTextFieldProps extends PropsWithoutRef<React.JSX.Intrins
 }
 
 export const LabeledTextField = forwardRef<HTMLInputElement, LabeledTextFieldProps>(
-  ({ name, label, outerProps, ...props }, ref) => {
+  ({name, label, outerProps, ...props}, ref) => {
     const [input] = useField(name)
-    const { isSubmitting } = useFormikContext()
+    const {isSubmitting} = useFormikContext()
 
     return (
       <div {...outerProps}>
-        <label>
+        <label className="flex flex-col items-start text-base">
           {label}
-          <input {...input} disabled={isSubmitting} {...props} ref={ref} />
+          <input
+            {...input}
+            disabled={isSubmitting}
+            {...props}
+            ref={ref}
+            className="mt-2 appearance-none rounded border border-primary px-2 py-1 text-base"
+          />
         </label>
 
         <ErrorMessage name={name}>
           {(msg) => (
-            <div role="alert" style={{ color: "red" }}>
+            <div role="alert" className="text-sm text-red-700">
               {msg}
             </div>
           )}
         </ErrorMessage>
-
-        <style jsx>{`
-          label {
-            display: flex;
-            flex-direction: column;
-            align-items: start;
-            font-size: 1rem;
-          }
-          input {
-            font-size: 1rem;
-            padding: 0.25rem 0.5rem;
-            border-radius: 3px;
-            border: 1px solid purple;
-            appearance: none;
-            margin-top: 0.5rem;
-          }
-        `}</style>
       </div>
     )
-  }
+  },
 )
 
 LabeledTextField.displayName = "LabeledTextField"

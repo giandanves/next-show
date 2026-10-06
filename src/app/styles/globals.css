@@ -1,23 +1,46 @@
-:root {
-  --border-radius: 0.75rem;
-  --screen-width: 90vmin;
+@import "tailwindcss";
+
+/*
+  Brand tokens — use as Tailwind utilities, e.g.:
+  text-primary, bg-secondary-light, font-cocogoose, max-h-hero, bg-primary-gradient
+*/
+@theme {
+  --color-primary: #7c3aed;
+  --color-primary-light: #a78bfa;
+  --color-secondary: #ff5a1f;
+  --color-secondary-light: #ffdbbb;
+  --color-white: #ffffff;
+
+  --font-cocogoose: "Cocogoose", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-cocogoose);
+
+  --max-height-hero: 844px;
+
+  --background-image-primary-gradient: linear-gradient(
+    to bottom,
+    var(--color-primary),
+    var(--color-primary-light)
+  );
+}
+
+@font-face {
+  font-family: "Cocogoose";
+  src: url("/fonts/Cocogoose.woff2") format("woff2"),
+    url("/fonts/Cocogoose.woff") format("woff");
+  font-weight: 400 900;
+  font-style: normal;
+  font-display: swap;
 }
 
 html,
 body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell,
-    Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
 a {
   color: inherit;
   text-decoration: none;
-}
-
-i {
-  font-size: 0.8rem;
 }
 
 * {
