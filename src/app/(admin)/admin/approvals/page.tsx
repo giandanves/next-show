@@ -110,6 +110,7 @@ function ApprovalsList() {
               <th>Nome</th>
               <th>Slug</th>
               <th>Cidade</th>
+              <th>Owner</th>
               <th />
             </tr>
           </thead>
@@ -119,15 +120,21 @@ function ApprovalsList() {
                 <td>{v.name}</td>
                 <td>{v.slug}</td>
                 <td>{v.city ?? "—"}</td>
+                <td>{v.owner.name ? `${v.owner.name} (${v.owner.email})` : v.owner.email}</td>
                 <td>
-                  <button
-                    type="button"
-                    className={styles.button}
-                    disabled={busyId === `venue-${v.id}`}
-                    onClick={() => onApproveVenue(v.id)}
-                  >
-                    Aprovar
-                  </button>
+                  <div className={styles.actions}>
+                    <Link href={`/admin/venues/${v.id}/edit`} className={styles.buttonSecondary}>
+                      Revisar
+                    </Link>
+                    <button
+                      type="button"
+                      className={styles.button}
+                      disabled={busyId === `venue-${v.id}`}
+                      onClick={() => onApproveVenue(v.id)}
+                    >
+                      Aprovar
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

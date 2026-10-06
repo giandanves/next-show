@@ -32,6 +32,7 @@ model User {
 
   artists              Artist[]
   artistMemberships    ArtistMember[]
+  venues               Venue[]
   showsCreated         Show[]             @relation("ShowCreatedBy")
   roleInvitesSent      RoleInvite[]       @relation("RoleInviteCreator")
   roleInvitesFulfilled RoleInvite[]       @relation("RoleInviteNewUser")
@@ -130,7 +131,12 @@ model Venue {
   /// PENDING | PUBLISHED — public only when PUBLISHED
   publicationStatus String @default("PENDING")
 
+  owner       User @relation(fields: [ownerUserId], references: [id])
+  ownerUserId Int
+
   shows Show[]
+
+  @@index([ownerUserId])
 }
 
 model Artist {
