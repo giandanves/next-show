@@ -1,12 +1,21 @@
 import db from "db"
+import type {StructuredAddress} from "./types"
 import {withHouseNumber} from "./parse"
 import {lookupPlace} from "./providers"
 
-/** Validates a place reference with the geocoder and returns the matching `Location` id. */
-export async function resolveLocationId(placeRef: string, houseNumber?: string): Promise<number> {
+/** Validates a place reference with the geocoder and returns the structured address. */
+export async function resolveStructuredAddress(
+  placeRef: string,
+  houseNumber?: string,
+): Promise<StructuredAddress> {
   const found = await lookupPlace(placeRef)
   if (!found) throw new Error("Address not found. Pick an address from the suggestions.")
-  const address = withHouseNumber(found, houseNumber)
+  return withHouseNumber(found, houseNumber)
+}
+
+/** Validates a place reference with the geocoder and returns the matching `Location` id. */
+export async function resolveLocationId(placeRef: string, houseNumber?: string): Promise<number> {
+  const address = await resolveStructuredAddress(placeRef, houseNumber)
 
   const data = {
     label: address.label,

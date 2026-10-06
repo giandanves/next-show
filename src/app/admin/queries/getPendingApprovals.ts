@@ -28,6 +28,7 @@ export default async function getPendingApprovals(_: null, ctx: Ctx) {
         name: true,
         createdAt: true,
         city: true,
+        owner: {select: {email: true, name: true}},
       },
     }),
   ])
