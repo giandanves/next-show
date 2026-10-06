@@ -1,13 +1,14 @@
 import Link from "next/link"
 import {HomeAdminCta} from "./components/HomeAdminCta"
+import Hero from "./compositions/Hero"
 
 export const dynamic = "force-dynamic"
 
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col">
+      <Hero />
       <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center gap-6 px-4 py-12 text-center">
-        <h1 className="text-4xl font-normal tracking-tight text-primary">next-show</h1>
         <p className="max-w-md text-neutral-700">
           Página pública do artista, área admin e convites de participação.
         </p>
