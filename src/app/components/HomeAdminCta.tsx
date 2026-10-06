@@ -5,7 +5,6 @@ import {Suspense} from "react"
 import {useCurrentUser} from "src/app/users/hooks/useCurrentUser"
 import {isPlatformCreatorOrAdmin} from "src/lib/artistAccess"
 import type {Role} from "types"
-import styles from "../styles/Home.module.css"
 
 function HomeAdminLink() {
   const user = useCurrentUser()
@@ -13,7 +12,10 @@ function HomeAdminLink() {
     return null
   }
   return (
-    <Link href="/admin" className={styles.loginButton}>
+    <Link
+      href="/admin"
+      className="inline-flex h-12 w-[200px] max-w-xs items-center justify-center rounded-xl border border-primary-light bg-white px-6 text-[15px] text-neutral-800 transition hover:bg-secondary-light/40"
+    >
       <strong>Admin</strong>
     </Link>
   )

@@ -17,7 +17,7 @@ export const LabeledCheckbox = forwardRef<HTMLInputElement, LabeledCheckboxProps
 
     return (
       <div {...outerProps}>
-        <label className="checkboxLabel">
+        <label className="flex cursor-pointer items-start gap-2 text-base">
           <input
             {...field}
             {...props}
@@ -25,32 +25,18 @@ export const LabeledCheckbox = forwardRef<HTMLInputElement, LabeledCheckboxProps
             checked={Boolean(field.value)}
             disabled={isSubmitting}
             ref={ref}
+            className="mt-0.5 shrink-0"
           />
           <span>{label}</span>
         </label>
 
         <ErrorMessage name={name}>
           {(msg) => (
-            <div role="alert" style={{color: "red"}}>
+            <div role="alert" className="text-sm text-red-700">
               {msg}
             </div>
           )}
         </ErrorMessage>
-
-        <style jsx>{`
-          .checkboxLabel {
-            display: flex;
-            flex-direction: row;
-            align-items: flex-start;
-            gap: 0.5rem;
-            font-size: 1rem;
-            cursor: pointer;
-          }
-          input {
-            margin-top: 0.2rem;
-            flex-shrink: 0;
-          }
-        `}</style>
       </div>
     )
   },

@@ -5,7 +5,7 @@ import {useParams} from "next/navigation"
 import {useQuery} from "@blitzjs/rpc"
 import getArtistForAdmin from "src/app/artists/queries/getArtistForAdmin"
 import {ShowForm} from "../../../../components/ShowForm"
-import styles from "../../../../admin.module.css"
+import {ui} from "../../../../ui"
 
 function NewShow() {
   const params = useParams()
@@ -13,12 +13,12 @@ function NewShow() {
   const [artist] = useQuery(getArtistForAdmin, {id: artistId}, {enabled: Number.isFinite(artistId)})
 
   if (!Number.isFinite(artistId) || !artist) {
-    return <p className={styles.error}>Artista não encontrado.</p>
+    return <p className={ui.error}>Artista não encontrado.</p>
   }
 
   return (
     <>
-      <h1 className={styles.h1}>Novo show — {artist.displayName ?? artist.slug}</h1>
+      <h1 className={ui.h1}>Novo show — {artist.displayName ?? artist.slug}</h1>
       <ShowForm artistId={artistId} mode="create" />
     </>
   )
@@ -26,7 +26,7 @@ function NewShow() {
 
 export default function NewArtistShowPage() {
   return (
-    <Suspense fallback={<p className={styles.hint}>Carregando…</p>}>
+    <Suspense fallback={<p className={ui.hint}>Carregando…</p>}>
       <NewShow />
     </Suspense>
   )

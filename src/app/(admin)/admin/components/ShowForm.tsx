@@ -5,7 +5,7 @@ import {useMutation} from "@blitzjs/rpc"
 import createShowForArtist from "src/app/shows/mutations/createShowForArtist"
 import updateShow from "src/app/shows/mutations/updateShow"
 import {AddressAutocomplete} from "./AddressAutocomplete"
-import styles from "../admin.module.css"
+import {ui} from "../ui"
 
 type ShowFormProps = {
   artistId: number
@@ -33,7 +33,7 @@ export function ShowForm({artistId, mode, showId, initial}: ShowFormProps) {
 
   return (
     <form
-      className={styles.form}
+      className={ui.form}
       onSubmit={async (e) => {
         e.preventDefault()
         const fd = new FormData(e.currentTarget)
@@ -59,18 +59,18 @@ export function ShowForm({artistId, mode, showId, initial}: ShowFormProps) {
         }
       }}
     >
-      <label className={styles.label}>
+      <label className={ui.label}>
         Título
-        <input className={styles.input} name="title" required defaultValue={initial?.title ?? ""} />
+        <input className={ui.input} name="title" required defaultValue={initial?.title ?? ""} />
       </label>
-      <label className={styles.label}>
+      <label className={ui.label}>
         Data e hora
-        <input className={styles.input} name="startsAt" type="datetime-local" required defaultValue={startsAtDefault} />
+        <input className={ui.input} name="startsAt" type="datetime-local" required defaultValue={startsAtDefault} />
       </label>
-      <label className={styles.label}>
+      <label className={ui.label}>
         Link de ingressos
         <input
-          className={styles.input}
+          className={ui.input}
           name="ticketPurchaseUrl"
           type="url"
           required
@@ -84,7 +84,7 @@ export function ShowForm({artistId, mode, showId, initial}: ShowFormProps) {
         initialLabel={initial?.addressLabel}
         required={mode === "create"}
       />
-      <button type="submit" className={styles.button}>
+      <button type="submit" className={ui.button}>
         {mode === "create" ? "Criar show" : "Salvar show"}
       </button>
     </form>

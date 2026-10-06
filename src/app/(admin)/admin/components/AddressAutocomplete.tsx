@@ -3,7 +3,7 @@
 import {useEffect, useId, useRef, useState} from "react"
 import {extractHouseNumber} from "src/lib/geo/parse"
 import type {PlaceSuggestion} from "src/lib/geo/types"
-import styles from "../admin.module.css"
+import {ui} from "../ui"
 
 type AddressAutocompleteProps = {
   /** Name of the hidden input that receives the selected place reference. */
@@ -68,12 +68,12 @@ export function AddressAutocomplete({
   }, [query, selected, initialText])
 
   return (
-    <div className={styles.label}>
+    <div className={ui.label}>
       <label htmlFor={`${listId}-input`}>{label}</label>
       <input
         ref={inputRef}
         id={`${listId}-input`}
-        className={styles.input}
+        className={ui.input}
         value={query}
         autoComplete="off"
         placeholder="Nome do local, rua, número, bairro…"
@@ -88,12 +88,12 @@ export function AddressAutocomplete({
       <input type="hidden" name={name} value={selected?.placeRef ?? ""} />
 
       {suggestions.length > 0 && (
-        <ul id={listId} role="listbox" className={styles.suggestions}>
+        <ul id={listId} role="listbox" className={ui.suggestions}>
           {suggestions.map((s) => (
             <li key={s.placeRef} role="option" aria-selected={false}>
               <button
                 type="button"
-                className={styles.suggestionButton}
+                className={ui.suggestionButton}
                 onClick={() => {
                   setSelected(s)
                   setHouseNumber(extractHouseNumber(query) ?? "")
@@ -108,17 +108,17 @@ export function AddressAutocomplete({
         </ul>
       )}
 
-      {status === "loading" && <span className={styles.hint}>Buscando endereços…</span>}
+      {status === "loading" && <span className={ui.hint}>Buscando endereços…</span>}
       {status === "error" && (
-        <span className={styles.error}>Busca de endereço indisponível. Tente novamente.</span>
+        <span className={ui.error}>Busca de endereço indisponível. Tente novamente.</span>
       )}
-      {selected && <span className={styles.hint}>Endereço validado.</span>}
+      {selected && <span className={ui.hint}>Endereço validado.</span>}
 
       {selected?.needsHouseNumber && (
-        <label className={styles.label}>
+        <label className={ui.label}>
           Número
           <input
-            className={styles.input}
+            className={ui.input}
             name={houseNumberName}
             value={houseNumber}
             inputMode="numeric"
@@ -126,7 +126,7 @@ export function AddressAutocomplete({
             placeholder="Ex.: 123"
             onChange={(e) => setHouseNumber(e.target.value)}
           />
-          <span className={styles.hint}>
+          <span className={ui.hint}>
             Essa rua não tem números mapeados; informe o número do local.
           </span>
         </label>

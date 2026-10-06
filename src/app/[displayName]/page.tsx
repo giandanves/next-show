@@ -7,7 +7,6 @@ import {
   parseSocialLinks,
   platformLabel,
 } from "src/lib/showFormatting"
-import styles from "./ArtistProfile.module.css"
 
 export default async function ArtistPublicPage({
   params,
@@ -22,17 +21,24 @@ export default async function ArtistPublicPage({
   const social = parseSocialLinks(artist.socialLinks)
 
   return (
-    <div className={styles.page}>
+    <div className="mx-auto max-w-2xl px-5 pb-16 pt-8">
       <article>
-        <h1 className={styles.title}>{heading}</h1>
+        <h1 className="mb-4 text-3xl font-bold leading-tight text-neutral-900">{heading}</h1>
 
         {social ? (
           <section aria-label="Social links">
-            <h2 className={styles.sectionTitle}>Redes</h2>
-            <ul className={styles.socialList}>
+            <h2 className="mt-7 mb-2 text-sm font-semibold uppercase tracking-wide text-neutral-600">
+              Redes
+            </h2>
+            <ul className="m-0 flex list-none flex-wrap gap-x-5 gap-y-3 p-0">
               {Object.entries(social).map(([platform, url]) => (
                 <li key={platform}>
-                  <a href={url} target="_blank" rel="noopener noreferrer">
+                  <a
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary underline"
+                  >
                     {platformLabel(platform)}
                   </a>
                 </li>
@@ -42,31 +48,35 @@ export default async function ArtistPublicPage({
         ) : null}
 
         <section aria-label="Shows">
-          <h2 className={styles.sectionTitle}>Shows</h2>
+          <h2 className="mt-7 mb-2 text-sm font-semibold uppercase tracking-wide text-neutral-600">
+            Shows
+          </h2>
           {artist.showLinks.length === 0 ? (
-            <p className={styles.showMeta}>Nenhum show cadastrado.</p>
+            <p className="m-0 text-[0.9375rem] leading-snug text-neutral-700">
+              Nenhum show cadastrado.
+            </p>
           ) : (
-            <ul className={styles.showList}>
+            <ul className="m-0 list-none p-0">
               {artist.showLinks.map(({show}) => {
                 const addressText = formatShowAddress(show)
                 const title = show.title?.trim() || "Show"
                 return (
-                  <li key={show.id} className={styles.showItem}>
-                    <h3 className={styles.showTitle}>
-                      <Link href={`/shows/${show.id}`}>{title}</Link>
+                  <li key={show.id} className="border-b border-neutral-200 py-4 last:border-b-0">
+                    <h3 className="mb-1.5 font-semibold text-neutral-900">
+                      <Link href={`/shows/${show.id}`} className="hover:text-primary hover:underline">
+                        {title}
+                      </Link>
                     </h3>
-                    <p className={styles.showDate}>
+                    <p className="mb-2 text-[0.9375rem] font-medium text-neutral-900">
                       <time dateTime={show.startsAt.toISOString()}>
                         {formatShowDateTime(show.startsAt)}
                       </time>
                     </p>
-                    {addressText ? (
-                      <p className={styles.showMeta}>{addressText}</p>
-                    ) : (
-                      <p className={styles.showMeta}>Endereço a confirmar</p>
-                    )}
+                    <p className="m-0 text-[0.9375rem] leading-snug text-neutral-700">
+                      {addressText || "Endereço a confirmar"}
+                    </p>
                     <a
-                      className={styles.ticketLink}
+                      className="mt-2 inline-block font-medium text-primary underline"
                       href={show.ticketPurchaseUrl}
                       target="_blank"
                       rel="noopener noreferrer"

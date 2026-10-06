@@ -4,7 +4,7 @@ import {useRouter} from "next/navigation"
 import {useMutation} from "@blitzjs/rpc"
 import addArtistMember from "src/app/artists/mutations/addArtistMember"
 import removeArtistMember from "src/app/artists/mutations/removeArtistMember"
-import styles from "../admin.module.css"
+import {ui} from "../ui"
 
 type Member = {
   id: number
@@ -20,7 +20,7 @@ export function MemberForm({artistId, members}: {artistId: number; members: Memb
   return (
     <>
       <form
-        className={styles.form}
+        className={ui.form}
         onSubmit={async (e) => {
           e.preventDefault()
           const fd = new FormData(e.currentTarget)
@@ -36,33 +36,33 @@ export function MemberForm({artistId, members}: {artistId: number; members: Memb
           }
         }}
       >
-        <label className={styles.label}>
+        <label className={ui.label}>
           Email do editor
-          <input className={styles.input} name="email" type="email" required />
+          <input className={ui.input} name="email" type="email" required />
         </label>
-        <button type="submit" className={styles.button}>
+        <button type="submit" className={ui.button}>
           Adicionar editor
         </button>
       </form>
 
       {members.length > 0 ? (
-        <table className={styles.table}>
+        <table className={ui.table}>
           <thead>
             <tr>
-              <th>Email</th>
-              <th>Papel</th>
-              <th />
+              <th className={ui.th}>Email</th>
+              <th className={ui.th}>Papel</th>
+              <th className={ui.th} />
             </tr>
           </thead>
           <tbody>
             {members.map((m) => (
               <tr key={m.id}>
-                <td>{m.user.email}</td>
-                <td>{m.role}</td>
-                <td>
+                <td className={ui.td}>{m.user.email}</td>
+                <td className={ui.td}>{m.role}</td>
+                <td className={ui.td}>
                   <button
                     type="button"
-                    className={styles.buttonSecondary}
+                    className={ui.buttonSecondary}
                     onClick={async () => {
                       if (!confirm("Remover este editor?")) return
                       try {
@@ -81,7 +81,7 @@ export function MemberForm({artistId, members}: {artistId: number; members: Memb
           </tbody>
         </table>
       ) : (
-        <p className={styles.hint}>Nenhum editor delegado.</p>
+        <p className={ui.hint}>Nenhum editor delegado.</p>
       )}
     </>
   )

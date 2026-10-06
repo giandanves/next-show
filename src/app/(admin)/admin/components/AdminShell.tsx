@@ -6,7 +6,7 @@ import {ReactNode, Suspense, useEffect} from "react"
 import {useCurrentUser} from "src/app/users/hooks/useCurrentUser"
 import {isPlatformAdmin, isPlatformCreatorOrAdmin} from "src/lib/artistAccess"
 import type {Role} from "types"
-import styles from "../admin.module.css"
+import {ui} from "../ui"
 
 function AdminGate({children}: {children: ReactNode}) {
   // useSuspenseQuery: this component only mounts after getCurrentUser resolves.
@@ -26,23 +26,33 @@ function AdminGate({children}: {children: ReactNode}) {
   }, [user, router])
 
   if (user === null) {
-    return <p className={styles.hint}>Redirecionando para login…</p>
+    return <p className={ui.hint}>Redirecionando para login…</p>
   }
 
   if (!isPlatformCreatorOrAdmin(user.role as Role)) {
-    return <p className={styles.hint}>Sem permissão…</p>
+    return <p className={ui.hint}>Sem permissão…</p>
   }
 
   return (
-    <div className={styles.shell}>
-      <nav className={styles.nav} aria-label="Admin">
-        <Link href="/admin">Dashboard</Link>
-        <Link href="/admin/artists">Artistas</Link>
-        <Link href="/admin/venues">Venues</Link>
+    <div className={ui.shell}>
+      <nav className={ui.nav} aria-label="Admin">
+        <Link href="/admin" className={ui.navLink}>
+          Dashboard
+        </Link>
+        <Link href="/admin/artists" className={ui.navLink}>
+          Artistas
+        </Link>
+        <Link href="/admin/venues" className={ui.navLink}>
+          Venues
+        </Link>
         {role && isPlatformAdmin(role) && (
-          <Link href="/admin/approvals">Aprovações</Link>
+          <Link href="/admin/approvals" className={ui.navLink}>
+            Aprovações
+          </Link>
         )}
-        <Link href="/">Site público</Link>
+        <Link href="/" className={ui.navLink}>
+          Site público
+        </Link>
       </nav>
       {children}
     </div>
@@ -52,7 +62,7 @@ function AdminGate({children}: {children: ReactNode}) {
 /** Auth + shell via Blitz RPC. Avoids server `invoke` and loading/auth race. */
 export function AdminShell({children}: {children: ReactNode}) {
   return (
-    <Suspense fallback={<p className={styles.hint}>Carregando sessão…</p>}>
+    <Suspense fallback={<p className={ui.hint}>Carregando sessão…</p>}>
       <AdminGate>{children}</AdminGate>
     </Suspense>
   )
