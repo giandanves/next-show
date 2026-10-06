@@ -57,16 +57,23 @@ export const RemoveArtistMember = z.object({
 export const CreateVenue = z.object({
   name: z.string().min(1).max(200),
   slug: ArtistSlug,
-  addressLine1: z.string().optional(),
-  addressLine2: z.string().optional(),
-  city: z.string().optional(),
-  region: z.string().optional(),
-  postalCode: z.string().optional(),
-  country: z.string().optional(),
+  placeRef: PlaceRef,
+  houseNumber: HouseNumber.optional(),
 })
 
-export const UpdateVenue = CreateVenue.extend({
+export const UpdateVenue = z.object({
   id: z.number().int().positive(),
+  name: z.string().min(1).max(200),
+  slug: ArtistSlug,
+  /** Omit to keep the current address. */
+  placeRef: PlaceRef.optional(),
+  houseNumber: HouseNumber.optional(),
+})
+
+/** ADMIN hands full venue ownership to a CREATOR (or another ADMIN). */
+export const TransferVenueOwnership = z.object({
+  venueId: z.number().int().positive(),
+  newOwnerUserId: z.number().int().positive(),
 })
 
 export const CreateVenueShow = z.object({
